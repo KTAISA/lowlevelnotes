@@ -1,0 +1,51 @@
+x86-64 register information -----------------------
+
+Intel - conventions
+
+RAX - Function return values 
+RBX - Base pointer to data section
+RCX - Counter for string and loop operations
+RDX - I/O pointer
+RBP - Stack Frame Base Pointer
+RSI - Source pointer for string operations
+RDI - Destination pointer for string operations
+RSP - Stack pointer
+RIP - Instruction pointer
+R8-15 - General Purpose extra
+
+Zero Flag (ZF) - set if the result of some instruction is zero, cleared otherwise
+Sign Flag (SF) - Set equal to the most significant bit. THE SIGN bit of a signed integer (0 for postive, 1 for negative)
+
+caller-save registers - RAX, RDX, RCX
+callee-save registers - RBP, RBX, RSI, RDI
+
+caller is in charge of saving the values before a call to a subroutine and restoring values after the call returns. Callee is highly likely to modify values in caller-save registers
+
+callee must not modify registers which the caller didnt save unless the callee itself saves and restores the existing values
+
+C Stuff --------------------------------------------
+file.c
+gcc -std=c99 file.c -o file
+objdump
+hexdump
+strings
+gdb
+
+General DEBUG info --------------------------------
+
+add rax, 8 (this moves the register up 1 address in RAM)
+
+radare2 | r2 ---------------------------------------
+? (advanced help menu)
+aaa
+s sym.main (s for seek, use tab for reviewing options)
+pdf
+ood (enables debug mode on program, add inputs - ood parm1 parm2)
+dc (runs program)
+db 0x00400642 (memory location)
+dr (review all registers at breakpoint)
+dr rip=0x00400642 (set register to memory location)
+VV (visual mode)
+afvn old_var new_var (rename var's in visual mode)
+
+
