@@ -1,3 +1,11 @@
+github notes -------------------------------------------
+
+git init
+git add "file.c"
+git commit -m "commit note or #"
+git remote add origin https://github.com/KTAISA/repo.git
+git push -u origin master
+
 x86-64 register information -----------------------
 
 Intel - conventions
