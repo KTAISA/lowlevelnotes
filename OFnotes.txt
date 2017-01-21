@@ -4,13 +4,26 @@ first time set up -------
 git init
 git add "file.c"
 git commit -m "commit note or #"
-git remote add origin https://github.com/KTAISA/repo.git
+git remote add origin https://github.com/USERNAME/repo.git
 git push -u origin master
 
-push updates (no tracking)
+push updates (no tracking) ---------
 git add "file.c"
 git commit -m "update note"
 git push -u origin master
+
+github collaborate -------------------------------------
+git remote -v 	#show remote details
+git remote rm origin	#remove current origin
+
+git pull #pull
+git pull origin branchname
+git clone https://github.com/user/project.git ~/dir/folder	#pull files to local folder
+
+git user config ---------
+
+git config --global user.email "myemail@email.com"
+git config --global user.name "username"
 
 x86-64 register information -----------------------
 
@@ -44,6 +57,8 @@ objdump
 hexdump
 strings
 gdb
+echo disassemble main | gdb license_fuzz > orig_gdb		#text file of output to review
+
 
 General DEBUG info --------------------------------
 
@@ -61,5 +76,28 @@ dr (review all registers at breakpoint)
 dr rip=0x00400642 (set register to memory location)
 VV (visual mode)
 afvn old_var new_var (rename var's in visual mode)
+p (in visual mode displays the memory address)
+V! (opens fancy visual mode)
 
 
+Python notes ---------------------------------------------------------------------------------
+
+List tricks -------
+a[start:end]	(items start through end -1)
+a[start:]	(items start through the rest of the array)
+a[:end]		(items from the beginning through end-1)
+a[:]		(copy of whole list)
+
+a[start:end:step]	(start thru end by step)
+
+bash system calls in python ------------------------------------------------------------
+import os
+os.system("cp file1.c file2.c) #works with c executables as well
+
+with open("file", "rb") as old_f, open("file2", "wb") as new_f:
+	file2.write(function(old_f.read()))
+
+General Notes ---------------------------------------------------------------------------------------
+
+bash -------------------------
+(./Cprog1 ; ./Cprog2 parm1) > 2outputs.txt
