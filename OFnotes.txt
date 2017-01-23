@@ -29,7 +29,7 @@ x86-64 register information -----------------------
 
 Intel - conventions
 
-RAX - Function return values 
+RAX - Function return values
 RBX - Base pointer to data section
 RCX - Counter for string and loop operations
 RDX - I/O pointer
@@ -96,6 +96,11 @@ os.system("cp file1.c file2.c) #works with c executables as well
 
 with open("file", "rb") as old_f, open("file2", "wb") as new_f:
 	file2.write(function(old_f.read()))
+
+python BINARY | Decimal | HEX -------------------------------------------
+int('1111', 2)
+for i in ["00000000", "00011000"]:
+  print "{0} | {1:3} | {2:2x}".format(i, int(i,2), int(i,2))
 
 General Notes ---------------------------------------------------------------------------------------
 
