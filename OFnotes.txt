@@ -78,6 +78,24 @@ afvn old_var new_var (rename var's in visual mode)
 p (in visual mode displays the memory address)
 V! (opens fancy visual mode)
 
+GDB -------------------------------------------------------------
+
+gdb ./file1
+
+set disassembly-flavor intel
+
+break *main
+run | r
+disassemble main
+info proc mappings    (mapped addressed in ram)
+x/wx $esp             (value in register)
+del                   (delete breakpoints)
+break *0x0804840c
+define hook-stop
+info registers
+x/24wx $esp
+x/2i $eip
+end
 
 Python notes ---------------------------------------------------------------------------------
 
@@ -88,6 +106,8 @@ a[:end]		(items from the beginning through end-1)
 a[:]		(copy of whole list)
 
 a[start:end:step]	(start thru end by step)
+
+python -c 'print "A"*(4+16*3+14)' | /opt/protostar/bin/stack0
 
 bash system calls in python ------------------------------------------------------------
 import os
@@ -120,3 +140,18 @@ General Notes ------------------------------------------------------------------
 
 bash -------------------------
 (./Cprog1 ; ./Cprog2 parm1) > 2outputs.txt
+echo $SHELL
+uname -a  (print system information)
+file stack0 (info about file)
+cat /etc/passwd   (all users set up on system - UID)
+ps aux    (review all running processes with PID and UID)
+whereis   (find file or script)
+id        (user id's and groups)
+
+r-x:  read + execute
+rw-:  read + write
+rwx:  read + write + execute
+rws:  run in security mode
+
+owner group user
+-rws | r-x | r-x:
