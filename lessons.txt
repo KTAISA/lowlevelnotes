@@ -13,6 +13,25 @@ ssh user@192.168.1.108
 Stack0 ------------------------------------
 LO - 0x0c video
 
+#include <stdlib.h>
+#include <unistd.h>
+#include <stdio.h>
+
+int main(int argc, char **argv)
+{
+  volatile int modified;
+  char buffer[64];
+
+  modified = 0;
+  gets(buffer);
+
+  if(modified != 0) {
+      printf("you have changed the 'modified' variable\n");
+  } else {
+      printf("Try again?\n");
+  }
+}
+
 man gets - gets does not limit how many characters it will read DONT USE
 violatile - C instruction to force compiler to keep code as is (instead of optimizing things out)
 
@@ -45,8 +64,87 @@ How far off are the A's (0x41) from the start of the gets command on stack (esp+
 echo AAAAAA | ./stack0
 python -c 'print "A"*(4+16*3+14)' | ./stack 0
 
+Stack1 ------------------------------------------------------
+#include <stdlib.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <string.h>
+
+int main(int argc, char **argv)
+{
+  volatile int modified;
+  char buffer[64];
+
+  if(argc == 1) {
+      errx(1, "please specify an argument\n");
+  }
+
+  modified = 0;
+  strcpy(buffer, argv[1]);
+
+  if(modified == 0x61626364) {
+      printf("you have correctly got the variable to the right value\n");
+  } else {
+      printf("Try again, you got 0x%08x\n", modified);
+  }
+}
+
+Stack2 ------------------------------------------------------
+
+#include <stdlib.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <string.h>
+
+int main(int argc, char **argv)
+{
+  volatile int modified;
+  char buffer[64];
+  char *variable;
+
+  variable = getenv("GREENIE");
+
+  if(variable == NULL) {
+      errx(1, "please set the GREENIE environment variable\n");
+  }
+
+  modified = 0;
+
+  strcpy(buffer, variable);
+
+  if(modified == 0x0d0a0d0a) {
+      printf("you have correctly modified the variable\n");
+  } else {
+      printf("Try again, you got 0x%08x\n", modified);
+  }
+}
 
 Stack3 ------------------------------------------------------
+
+#include <stdlib.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <string.h>
+
+void win()
+{
+  printf("code flow successfully changed\n");
+}
+
+int main(int argc, char **argv)
+{
+  volatile int (*fp)();
+  char buffer[64];
+
+  fp = 0;
+
+  gets(buffer);
+
+  if(fp) {
+      printf("calling function pointer, jumping to 0x%08x\n", fp);
+      fp();
+  }
+}
 
 volatile int (*fp)(); - function pointer
 if(fp) {      IF the function pointer is 0 run function 
@@ -76,4 +174,117 @@ gdb ---
 r < /tmp/exp - r in gdb using input from file
 python chr(0x51) = Q
 
+Stack4 ------------------------------------------------------
+#include <stdlib.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <string.h>
 
+void win()
+{
+  printf("code flow successfully changed\n");
+}
+
+int main(int argc, char **argv)
+{
+  char buffer[64];
+
+  gets(buffer);
+}
+
+Stack4 takes a look at overwriting saved EIP and standard buffer overflows.
+
+This level is at /opt/protostar/bin/stack4
+
+Hints
+
+A variety of introductory papers into buffer overflows may help.
+gdb lets you do “run < input”
+EIP is not directly after the end of buffer, compiler padding can also increase the size.
+
+Stack5 ------------------------------------------------------
+#include <stdlib.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <string.h>
+
+int main(int argc, char **argv)
+{
+  char buffer[64];
+
+  gets(buffer);
+}
+
+At this point in time, it might be easier to use someone elses shellcode
+If debugging the shellcode, use \xcc (int3) to stop the program executing and return to the debugger
+remove the int3s once your shellcode is done.
+
+Stack6 ------------------------------------------------------
+
+#include <stdlib.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <string.h>
+
+void getpath()
+{
+  char buffer[64];
+  unsigned int ret;
+
+  printf("input path please: "); fflush(stdout);
+
+  gets(buffer);
+
+  ret = __builtin_return_address(0);
+
+  if((ret & 0xbf000000) == 0xbf000000) {
+      printf("bzzzt (%p)\n", ret);
+      _exit(1);
+  }
+
+  printf("got path %s\n", buffer);
+}
+
+int main(int argc, char **argv)
+{
+  getpath();
+}
+
+Stack6 looks at what happens when you have restrictions on the return address.
+
+This level can be done in a couple of ways, such as finding the duplicate of the payload (objdump -s) will help with this), or ret2libc, or even return orientated programming.
+
+It is strongly suggested you experiment with multiple ways of getting your code to execute here.
+
+Stack7 ------------------------------------------------------
+#include <stdlib.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <string.h>
+
+char *getpath()
+{
+  char buffer[64];
+  unsigned int ret;
+
+  printf("input path please: "); fflush(stdout);
+
+  gets(buffer);
+
+  ret = __builtin_return_address(0);
+
+  if((ret & 0xb0000000) == 0xb0000000) {
+      printf("bzzzt (%p)\n", ret);
+      _exit(1);
+  }
+
+  printf("got path %s\n", buffer);
+  return strdup(buffer);
+}
+
+int main(int argc, char **argv)
+{
+  getpath();
+}
+
+The metasploit tool “msfelfscan” can make searching for suitable instructions very easy, otherwise looking through objdump output will suffice.
