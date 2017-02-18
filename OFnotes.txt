@@ -52,6 +52,42 @@ callee must not modify registers which the caller didnt save unless the callee i
 
 STACK NOTES---------------
 
+Stack Segment - function calls (dynamic)
+Heap Segment - dynamically allocating memory
+data segment - variables
+bss segment - variables
+text segment - set of instructions (actual code)
+
+Shellcode will use text and stack
+
+32bit on 32bit machine - 64 bit on 64 bit machine
+nasm -f elf -o shell.o shell.asm
+ld -o shell shell.o
+./shell
+
+bits 32
+extern printf
+global main
+
+section .data
+  message db "Hellow world!!", 10, 0
+
+section .text
+
+main:
+  pushad
+  push dword message
+  call printf
+  add esp, 4
+  popad
+  ret
+
+compile 32 bit ASM on 64 bit machine - ties GCC to main function
+nasm -f elf32 -o code.o  code.asm
+gcc -m32 code.o -o code
+./code
+
+
 start Addr    End Addr      Size
 0xbffeb000    0xc0000000    0x15000   STACK
 
@@ -178,6 +214,8 @@ General Notes ------------------------------------------------------------------
 
 bash -------------------------
 (./Cprog1 ; ./Cprog2 parm1) > 2outputs.txt
+./stack1 cat /tmp/stack1  (direct file output for arguements)
+cat /tmp/stack0 | ./stack0  (direct output into program)
 echo $SHELL
 bash -i
 uname -a  (print system information)
@@ -231,3 +269,10 @@ deliver payload with a I/O function such as 'cat'
 
 python exploit.py ; cat
 (python exploit.py ; cat) | /opt/protostar/bin/stack4
+
+
+Protostar VM -------------------------------------------------
+
+user / user
+ip addr
+
