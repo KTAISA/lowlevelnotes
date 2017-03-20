@@ -109,6 +109,8 @@ file.c
 gcc -std=c99 file.c -o file
 objdump
 objdump -t file | grep func   (memory where function begins)
+objdump -s      (full contents of code)
+objdump -D      (disassemble all)
 hexdump
 strings
 strace
@@ -117,7 +119,7 @@ echo disassemble main | gdb license_fuzz > orig_gdb		#text file of output to rev
 
 General DEBUG info --------------------------------
 
-add rax, 8 (this moves the register up 1 address in RAM)
+add rax, 9 (this moves the register up 1 address in RAM)
 
 radare2 | r2 ---------------------------------------
 ? (advanced help menu)
@@ -136,6 +138,7 @@ V! (opens fancy visual mode)
 
 GDB -------------------------------------------------------------
 
+gdbinit files
 gdb ./file1
 
 set disassembly-flavor intel
@@ -182,6 +185,7 @@ a[:]		(copy of whole list)
 a[start:end:step]	(start thru end by step)
 
 python -c 'print "A"*(4+16*3+14)' | /opt/protostar/bin/stack0
+envVAR=`python -c 'print "A"*64 + \x0a\x0d\x0a\x0d"'`
 
 bash system calls in python ------------------------------------------------------------
 import os
@@ -224,6 +228,7 @@ cat /etc/passwd   (all users set up on system - UID)
 ps aux    (review all running processes with PID and UID)
 whereis   (find file or script)
 id        (user id's and groups)
+ROT13 - cat data.txt | tr '[A-Za-z]' '[N-ZA-Mn-za-m]'
 
 r-x:  read + execute
 rw-:  read + write
